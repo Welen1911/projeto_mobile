@@ -1,9 +1,32 @@
-import React from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import services from "@/services";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 
-const categories = ["Frutas", "Laticínios", "Bebidas", "Limpeza"];
+// const categories = ["Frutas", "Laticínios", "Bebidas", "Limpeza"];
 
 const CategoriesScreen = () => {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await services.category.getAll();
+        console.log("Categories", data);
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+  
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Categorias de Produtos</Text>
@@ -12,7 +35,7 @@ const CategoriesScreen = () => {
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.categoryButton}>
-            <Text style={styles.categoryText}>{item}</Text>
+            <Text style={styles.categoryText}>{item.name}</Text>
           </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}
